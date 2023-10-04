@@ -1,16 +1,10 @@
 pipeline {
     agent any
 
-    triggers {
-        // Trigger the pipeline on every commit to the "main" branch
-        scm('refs/heads/main')
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                // Check out the code from the "main" branch
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: []])
+                checkout scm
             }
         }
 
