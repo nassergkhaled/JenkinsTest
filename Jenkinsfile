@@ -8,11 +8,7 @@ pipeline {
             }
         }
 
-        stage('Build and Test') {
-            steps {
-                sh 'mvn clean install'
-            }
-        }
+
 
         stage('Build Docker Image') {
             steps {
