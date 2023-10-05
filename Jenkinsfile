@@ -20,25 +20,24 @@ pipeline {
             }
         }
 
-        stage('Deploy to EC2') {
-            environment {
-                // Define your EC2 instance credentials and details here
-                AWS_ACCESS_KEY_ID = credentials('AKIAWIFT7KU6ZNBK2KPD')
-                AWS_SECRET_ACCESS_KEY = credentials('2gnt9S8JivR3M2s3emn3n907Dv1n66CYkOgap7Fz')
-                EC2_INSTANCE_IP = '54.163.188.194'
-            }
-            steps {
-                // Copy the Docker image to the EC2 instance and run it
-                sh """
-                export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
-                export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
-                export AWS_DEFAULT_REGION='us-east-1'
-                docker save my-spring-app | gzip | \
-                    ssh -o StrictHostKeyChecking=no ec2-user@${EC2_INSTANCE_IP} 'gunzip | docker load'
-                ssh -o StrictHostKeyChecking=no ec2-user@${EC2_INSTANCE_IP} 'docker run -d -p 8081:8081 my-spring-app'
-                """
-            }
-        }
+        stage('Deploy to Azure VM') {
+                    environment {
+                        // Define your Azure VM details here
+                        AZURE_VM_IP = 'your-azure-vm-ip'
+                        AZURE_VM_USERNAME = 'your-vm-username'
+                        AZURE_SSH_KEY = credentials('your-azure-ssh-key-id')
+                    }
+                    steps {
+                        // Copy the Docker image to the Azure VM and run it
+                        sh """
+                        ssh -i ${AZURE_SSH_KEY} ${AZURE_VM_USERNAME}@${AZURE_VM_IP} 'docker stop my-spring-app || true'
+                        ssh -i ${AZURE_SSH_KEY} ${AZURE_VM_USERNAME}@${AZURE_VM_IP} 'docker rm my-spring-app || true'
+                        docker save my-spring-app | gzip | \
+                            ssh -i ${AZURE_SSH_KEY} ${AZURE_VM_USERNAME}@${AZURE_VM_IP} 'gunzip | docker load'
+                        ssh -i ${AZURE_SSH_KEY} ${AZURE_VM_USERNAME}@${AZURE_VM_IP} 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
+                        """
+                    }
+                }
     }
 
     post {
@@ -50,3 +49,6 @@ pipeline {
         }
     }
 }
+
+
+
