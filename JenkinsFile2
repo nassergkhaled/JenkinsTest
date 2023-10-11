@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 1, unit: 'HOURS') // Adjust the timeout as needed
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t my-spring-app .'
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                sh 'docker stop my-spring-app || true'
+                sh 'docker rm my-spring-app || true'
+                sh 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs for details.'
+        }
+    }
+}
