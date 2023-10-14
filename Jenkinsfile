@@ -26,8 +26,8 @@ pipeline {
             steps {
                 // Use Jenkins credentials for SSH key and Azure VM username
                 withCredentials([
-                    sshUserPrivateKey(credentialsId: 'AZURE_SSH_KEY_CREDENTIAL', keyFileVariable: 'SSH_KEY_VM1'),
-                    usernameColonPassword(credentialsId: 'AZURE_VM_USERNAME_CREDENTIAL', variable: 'AZURE_VM_USERNAME')
+                    sshUserPrivateKey(credentialsId: '59142325-8542-4f3d-994e-ec4d8e1de660', keyFileVariable: 'SSH_KEY_VM1'),
+                    usernameColonPassword(credentialsId: '35f3ae36-d817-421f-9548-2a24a2223bc7', variable: 'AZURE_VM_USERNAME')
                 ]) {
                     script {
                         def azureIp = credentials('AZURE_VM_IP_CREDENTIAL')
