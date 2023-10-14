@@ -1,9 +1,9 @@
 pipeline {
     agent any
 
-    options {
-        timeout(time: 1, unit: 'HOURS') // Adjust the timeout as needed
-    }
+    // options {
+    //     timeout(time: 1, unit: 'HOURS') // Adjust the timeout as needed
+    // }
 
     environment {
         AZURE_VM_IP = credentials('AZURE_VM_IP')
