@@ -1,13 +1,12 @@
 pipeline {
     agent any
 
-    // options {
-    //     timeout(time: 1, unit: 'HOURS') // Adjust the timeout as needed
-    // }
+    options {
+        timeout(time: 1, unit: 'HOURS') // Adjust the timeout as needed
+    }
 
     environment {
-        AZURE_VM_IP = credentials('AZURE_VM_IP')
-        AZURE_VM_USERNAME = credentials('AZURE_VM_USERNAME')
+        AZURE_VM_IP = credentials('AZURE_VM_IP_CREDENTIAL')
     }
 
     stages {
@@ -25,14 +24,22 @@ pipeline {
 
         stage('Deploy to Remote Azure VM') {
             steps {
-                // Copy the Docker image to the Azure VM and run it remotely
-                sh """
-                ssh -i $AZURE_SSH_KEY $AZURE_VM_USERNAME@$AZURE_VM_IP 'docker stop my-spring-app || true'
-                ssh -i $AZURE_SSH_KEY $AZURE_VM_USERNAME@$AZURE_VM_IP 'docker rm my-spring-app || true'
-                docker save my-spring-app | gzip | \
-                    ssh -i $AZURE_SSH_KEY $AZURE_VM_USERNAME@$AZURE_VM_IP 'gunzip | docker load'
-                ssh -i $AZURE_SSH_KEY $AZURE_VM_USERNAME@$AZURE_VM_IP 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
-                """
+                // Use Jenkins credentials for SSH key and Azure VM username
+                withCredentials([
+                    sshUserPrivateKey(credentialsId: 'AZURE_SSH_KEY_CREDENTIAL', keyFileVariable: 'SSH_KEY_VM1'),
+                    usernameColonPassword(credentialsId: 'AZURE_VM_USERNAME_CREDENTIAL', variable: 'AZURE_VM_USERNAME')
+                ]) {
+                    script {
+                        def azureIp = credentials('AZURE_VM_IP_CREDENTIAL')
+                        sh """
+                        ssh -i $SSH_KEY_VM1 $AZURE_VM_USERNAME@$azureIp 'docker stop my-spring-app || true'
+                        ssh -i $SSH_KEY_VM1 $AZURE_VM_USERNAME@$azureIp 'docker rm my-spring-app || true'
+                        docker save my-spring-app | gzip | \
+                            ssh -i $SSH_KEY_VM1 $AZURE_VM_USERNAME@$azureIp 'gunzip | docker load'
+                        ssh -i $SSH_KEY_VM1 $AZURE_VM_USERNAME@$azureIp 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
+                        """
+                    }
+                }
             }
         }
     }
