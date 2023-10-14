@@ -17,6 +17,12 @@ pipeline {
             }
         }
 
+        stage('Add Azure VM Host Key to known_hosts') {
+            steps {
+                sh "ssh-keyscan $AZURE_VM_IP_ADDRESS >> ~/.ssh/known_hosts"
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t my-spring-app .'
