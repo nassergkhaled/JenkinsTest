@@ -32,11 +32,11 @@ pipeline {
                     script {
                         def azureIp = credentials('AZURE_VM_IP_CREDENTIAL')
                         sh """
-                        ssh -i $SSH_KEY_VM1 $AZURE_VM_USERNAME@$azureIp 'docker stop my-spring-app || true'
-                        ssh -i $SSH_KEY_VM1 $AZURE_VM_USERNAME@$azureIp 'docker rm my-spring-app || true'
+                        ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'docker stop my-spring-app || true'
+                        ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'docker rm my-spring-app || true'
                         docker save my-spring-app | gzip | \
-                            ssh -i $SSH_KEY_VM1 $AZURE_VM_USERNAME@$azureIp 'gunzip | docker load'
-                        ssh -i $SSH_KEY_VM1 $AZURE_VM_USERNAME@$azureIp 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
+                            ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'gunzip | docker load'
+                        ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
                         """
                     }
                 }
