@@ -59,13 +59,18 @@ pipeline {
                 ]) {
                     script {
                         def azureIp = env.AZURE_VM_IP_ADDRESS
-                        sh """
-                        ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'docker stop my-spring-app || true'
-                        ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'docker rm my-spring-app || true'
-                        docker save my-spring-app | gzip | \
-                            ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'gunzip | docker load'
-                        ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
-                        """
+                        
+                        // Stop the Docker container
+                        sh "ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'docker stop my-spring-app || true'"
+                        
+                        // Remove the Docker container
+                        sh "ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'docker rm my-spring-app || true'"
+                        
+                        // Save and load the Docker image
+                        sh "docker save my-spring-app | gzip | ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'gunzip | docker load'"
+                        
+                        // Run the Docker container
+                        sh "ssh -i \$SSH_KEY_VM1 \$AZURE_VM_USERNAME@\$azureIp 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'"
                     }
                 }
             }
