@@ -21,8 +21,8 @@ pipeline {
        stage('Deploy to Remote Azure VM') {
             steps {
                 withCredentials([
-                    sshUserPrivateKey(credentialsId: 'YOUR_SSH_KEY_CREDENTIAL_ID', keyFileVariable: 'SSH_KEY_VM1', passphraseVariable: 'SSH_PASSPHRASE'),
-                    usernameColonPassword(credentialsId: 'YOUR_AZURE_VM_USERNAME_CREDENTIAL_ID', variable: 'AZURE_VM_USERNAME')
+                    sshUserPrivateKey(credentialsId: '59142325-8542-4f3d-994e-ec4d8e1de660', keyFileVariable: 'SSH_KEY_VM1', passphraseVariable: 'SSH_PASSPHRASE'),
+                    usernameColonPassword(credentialsId: '35f3ae36-d817-421f-9548-2a24a2223bc7', variable: 'AZURE_VM_USERNAME')
                 ]) {
                     script {
                         sh """
