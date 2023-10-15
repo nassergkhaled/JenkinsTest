@@ -25,15 +25,30 @@ pipeline {
                     sshUserPrivateKey(credentialsId: '59142325-8542-4f3d-994e-ec4d8e1de660', keyFileVariable: 'SSH_KEY_VM1', passphraseVariable: 'SSH_PASSPHRASE'),
                     usernameColonPassword(credentialsId: '35f3ae36-d817-421f-9548-2a24a2223bc7', variable: 'AZURE_VM_USERNAME')
                 ]) {
-                    script {
-                        sh """
-                        ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker stop my-spring-app || true'
-                        ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker rm my-spring-app || true'
-                        docker save my-spring-app | gzip | \
-                            ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'gunzip | docker load'
-                        ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
-                        """
-                    }
+                   script {
+    def sshKeyPath = "/var/lib/jenkins/workspace/JenkinsFirstTest/ssh_key.pem"
+    def azureVmHost = "74.249.98.141"
+    def azureUsername = env.AZURE_VM_USERNAME  // Assumes AZURE_VM_USERNAME is available in environment
+
+    def dockerStopCmd = "docker stop my-spring-app || true"
+    def dockerRmCmd = "docker rm my-spring-app || true"
+    def dockerSaveCmd = "docker save my-spring-app | gzip"
+    def dockerLoadCmd = "gunzip | docker load"
+    def dockerRunCmd = "docker run -d -p 8081:8081 --name my-spring-app my-spring-app"
+
+    // SSH command for stopping the Docker container
+    sh "ssh -i ${sshKeyPath} ${azureUsername}@${azureVmHost} '${dockerStopCmd}'"
+
+    // SSH command for removing the Docker container
+    sh "ssh -i ${sshKeyPath} ${azureUsername}@${azureVmHost} '${dockerRmCmd}'"
+
+    // SSH command for saving and loading Docker image
+    sh "ssh -i ${sshKeyPath} ${azureUsername}@${azureVmHost} '${dockerSaveCmd} | ${dockerLoadCmd}'"
+
+    // SSH command for running the Docker container
+    sh "ssh -i ${sshKeyPath} ${azureUsername}@${azureVmHost} '${dockerRunCmd}'"
+}
+
                 }
             }
         }
