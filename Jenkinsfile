@@ -27,7 +27,6 @@ pipeline {
                 ]) {
                     script {
                         sh """
-                        // echo '\$SSH_KEY_VM1' > ssh_key.pem
                         apt-get update
                         chmod 400 ssh_key.pem
                         ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker stop my-spring-app || true'
