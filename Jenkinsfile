@@ -27,7 +27,7 @@ pipeline {
                     script {
                         sh """
                         echo '\$SSH_KEY_VM1' > ssh_key.pem
-                        chmod 400 ssh_key.pem
+                        chmod 600 ssh_key.pem
                         ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker stop my-spring-app || true'
                         ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker rm my-spring-app || true'
                         docker save my-spring-app | gzip | \
