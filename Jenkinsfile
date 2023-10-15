@@ -26,7 +26,7 @@ pipeline {
                     usernameColonPassword(credentialsId: '35f3ae36-d817-421f-9548-2a24a2223bc7', variable: 'AZURE_VM_USERNAME')
                 ]) {
                     script {
-                        sh """
+                    
                         sh """
 ssh azureuser@74.249.98.141 'docker stop my-spring-app || true'
 ssh azureuser@74.249.98.141 'docker rm my-spring-app || true'
