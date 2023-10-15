@@ -14,7 +14,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'sudo docker build -t my-spring-app .'
+                sh 'docker build -t my-spring-app .'
             }
         }
 
