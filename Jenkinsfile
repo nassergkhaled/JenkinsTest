@@ -18,7 +18,21 @@ pipeline {
             }
         }
 
-stage('Deploy to Remote Azure VM') { steps { withCredentials([ sshUserPrivateKey(credentialsId: 'YOUR_SSH_KEY_CREDENTIAL_ID', keyFileVariable: 'SSH_KEY_VM1', passphraseVariable: 'SSH_PASSPHRASE'), usernameColonPassword(credentialsId: 'YOUR_AZURE_VM_USERNAME_CREDENTIAL_ID', variable: 'AZURE_VM_USERNAME') ]) { script { sh """ echo '\$SSH_KEY_VM1' > ssh_key.pem ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker stop my-spring-app || true' ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker rm my-spring-app || true' docker save my-spring-app | gzip | \ ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'gunzip | docker load' ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app' """
+       stage('Deploy to Remote Azure VM') {
+            steps {
+                withCredentials([
+                    sshUserPrivateKey(credentialsId: 'YOUR_SSH_KEY_CREDENTIAL_ID', keyFileVariable: 'SSH_KEY_VM1', passphraseVariable: 'SSH_PASSPHRASE'),
+                    usernameColonPassword(credentialsId: 'YOUR_AZURE_VM_USERNAME_CREDENTIAL_ID', variable: 'AZURE_VM_USERNAME')
+                ]) {
+                    script {
+                        sh """
+                        echo '\$SSH_KEY_VM1' > ssh_key.pem
+                        ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker stop my-spring-app || true'
+                        ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker rm my-spring-app || true'
+                        docker save my-spring-app | gzip | \
+                            ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'gunzip | docker load'
+                        ssh -i ssh_key.pem \$AZURE_VM_USERNAME@74.249.98.141 'docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
+                        """
                     }
                 }
             }
