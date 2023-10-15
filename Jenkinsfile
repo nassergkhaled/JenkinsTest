@@ -12,9 +12,9 @@ pipeline {
             }
         }
 
-    stage('Build Docker Image') {
+  stage('Build Docker Image') {
     steps {
-        sh 'docker build -t my-spring-app . --build-arg SSH_KEY=/var/lib/jenkins/workspace/JenkinsFirstTest/ssh_key.pem'
+        sh 'docker build -t my-spring-app . --build-arg SSH_KEY=/var/lib/jenkins/workspace/JenkinsFirstTest/ssh_key.pem --build-arg BUILDKIT_INLINE_CACHE=1'
     }
 }
 
