@@ -14,4 +14,4 @@ jobs:
         env:
           JENKINS_WEBHOOK_SECRET: ${{ secrets.JENKINS_WEBHOOK_SECRET }}
         run: |
-          curl -X POST -H "X-Hub-Signature: sha1=$(echo -n $JENKINS_WEBHOOK_SECRET | openssl sha1 -hmac $JENKINS_WEBHOOK_SECRET)" http://20.62.95.207:8080/github-webhook/  
+          
