@@ -22,6 +22,6 @@ public class DockerHelloWorld {
 	@GetMapping(path = "/version")
 	public String authorName()
 	{
-		return "1.1";
+		return "1";
 	}
 }
