@@ -28,7 +28,7 @@ pipeline {
                     script {
                     
                         sh """
-ssh azureuser@74.249.98.141 'docker stop my-spring-app || true'
+ssh -i ssh_key.pub azureuser@74.249.98.141 'docker stop my-spring-app || true'
 ssh azureuser@74.249.98.141 'docker rm my-spring-app || true'
 docker save my-spring-app -o my-spring-app.tar
 scp my-spring-app.tar azureuser@74.249.98.141:~/my-spring-app.tar
