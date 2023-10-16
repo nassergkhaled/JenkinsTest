@@ -19,4 +19,9 @@ public class DockerHelloWorld {
 	{
 		return "Nasser G Khaled";
 	}
+	@GetMapping(path = "/version")
+	public String authorName()
+	{
+		return "1";
+	}
 }
