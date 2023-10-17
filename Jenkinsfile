@@ -27,13 +27,15 @@ pipeline {
                 ]) {
                     script {
                     
-                        sh """
-                        docker save my-spring-app -o my-spring-app.tar
+                       sh """
+docker save my-spring-app -o my-spring-app.tar
 scp -i /var/lib/jenkins/ssh_key my-spring-app.tar azureuser@74.249.98.141:~/my-spring-app.tar
-ssh -i /var/lib/jenkins/ssh_key azureuser@74.249.98.141 'sudo docker rm my-spring-app || true'
+ssh -i /var/lib/jenkins/ssh_key azureuser@74.249.98.141 'sudo docker stop my-spring-app || true'  # Stop the existing container
+ssh -i /var/lib/jenkins/ssh_key azureuser@74.249.98.141 'sudo docker rm my-spring-app || true'  # Remove the existing container
 ssh -i /var/lib/jenkins/ssh_key azureuser@74.249.98.141 'sudo docker load -i ~/my-spring-app.tar'
-ssh  -i /var/lib/jenkins/ssh_key azureuser@74.249.98.141 'sudo docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
+ssh -i /var/lib/jenkins/ssh_key azureuser@74.249.98.141 'sudo docker run -d -p 8081:8081 --name my-spring-app my-spring-app'
 """
+
 
                     }
                 }
