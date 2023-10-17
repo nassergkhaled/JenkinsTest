@@ -20,7 +20,7 @@ public class DockerHelloWorld {
 		return "Nasser G Khaled";
 	}
 	@GetMapping(path = "/version")
-	public String authorName()
+	public String version()
 	{
 		return "1";
 	}
